@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>2020欧洲杯回看</title>
+        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+        <style>
+            html,body{height: 100%;width: 100%;overflow: hidden; }
+            body{background-color: #f4f4f4;text-align:center;}
+            .item-list{margin:0 auto;width: 100%;height: 100%;overflow-y: auto;}
+            .item-wrap{width: 1024px;height:104px;background-color:#fff;vertical-align: middle;margin:0 auto;overflow: hidden;}
+            .btn{display: inline-block;outline: none;width: 118px;height: 36px;color: #59a634;font-size: 14px; line-height: 36px;text-align: center; border: 2px solid #1dc329;border-radius: 18px; text-decoration : none}
+            .item-left{width:250px;height: 100%;float: left;font-size: 24px;color:#59a634;padding-bottom: 5px;}
+            .item-middle{width:524px;height: 100%;float: left;font-size: 24px;text-align: center;padding-top: 10px;}
+            .item-right{width:250px;height: 100%;line-height:100px;float: left;}
+            .info{text-align:center}
+            .team-L{width: 200px;}
+            .team-L{width: 200px;}
+            .vs{width: 124px;}
+            .item-middle p{float: left;display: inline-block;outline: none;height: 36px; line-height: 36px;text-align: center;}
+            .date{display: inline-block;outline: none;width: 200px;height: 36px; line-height: 36px;text-align: center; margin-bottom: 0;}
+            .match-info{display: inline-block;outline: none;width: 200px;height: 36px; line-height: 36px;text-align: center;margin-top: 0;}
+            .mod-match-list .list-item .item_team_info .team_info_logo {display: inline-block;vertical-align: middle;width: 36px;height: 36px;}
+            .player-wrap{background: rgba(95, 94, 94, 0.6);height: 100%;width: 100%;position: absolute;z-index:999;top:0;left:0;margin: 0;padding: 0;}
+            .pop-player{ height: 82%;width: 88%;margin: 1% 3%;border: 0;}
+        </style>
+    </head>
+    <body>
+        <div class="item-list" id="list_table">
+        </div>       
+        
+        <div id="popdiv" class="player-wrap" style="display: none;">
+            <iframe src="" class="pop-player"></iframe>
+        </div>    
+    </body>
+    <template id="mytemplate">            
+        <div class="item-wrap">            
+            <div class="item-left">
+                <p class="date" id="date"></p>
+                <p class="match-info" id="type"></p>
+            </div>
+
+            <div class="item-middle">
+                <div class="info">
+                    <p class="team-L" id="home"></p>
+                    <p class="vs">VS</p>
+                    <p class="team-L" id="away"></p>  
+                </div>                    
+            </div>
+
+            <div class="item-right">
+                <a class="btn" href="" target="_blank" id="play">回放</a>
+            </div>
+          
+    </template>
+    <script type="text/javascript">    
+    $(document).ready(function(){
+        var type = "";
+        $.getJSON("matchlist.json",function(json){
+            $.each(json.retData.list,function(idx,obj){
+                $.each(obj.match_list,function (id,item) {
+                    type = "";
+                    if(item.group_name != ""){
+                        type = item.group_name + "组 " + item.round_ch_name;
+                    }else{
+                        type = item.round_ch_name;
+                    }
+
+                    // select
+                    var t = document.querySelector('#mytemplate');
+
+                    // set
+                    
+                    t.content.querySelector('#date').textContent= item.matchStartTime;
+                    t.content.querySelector('#type').textContent= type;
+                    t.content.querySelector('#home').textContent= item.homeTeamName;
+                    t.content.querySelector('#away').textContent= item.guestTeamName;
+
+                    if(item.articleId_review_url != ""){
+                        t.content.querySelector('#play').href = "http://api.yueliangjx.com/?url=" +item.articleId_review_url;
+                    }else{
+                        t.content.querySelector('#play').style.display = "none";
+                    }
+
+                    // add to document DOM
+                    var clone = document.importNode(t.content, true); // where true means deep copy
+                    
+                    $("#list_table").append(clone);
+                })
+                
+            })
+        });
+    });
+
+    </script>
+
+</html>
